@@ -191,8 +191,11 @@ func (a *Atlas) NewImage(r *bufio.Reader, line string) (err error) {
 	if len(line) == 1 {
 		return fmt.Errorf("image name error")
 	}
+
+	tmpString := strings.Trim(line, "\n")
+	tmpString = strings.Trim(tmpString, "\r")
 	image := &Image{
-		Name: fmt.Sprintf("%s.png", strings.Trim(line, "\n")),
+		Name: fmt.Sprintf("%s.png", tmpString),
 	}
 	err = image.parseRotate(r.ReadString('\n'))
 	if err != nil {
@@ -215,9 +218,9 @@ func (a *Atlas) NewImage(r *bufio.Reader, line string) (err error) {
 		return err
 	}
 	err = image.parseIndex(r.ReadString('\n'))
-	if err != nil {
-		return err
-	}
+	// if err != nil {
+	// 	return err
+	// }
 
 	a.Images = append(a.Images, image)
 
@@ -230,7 +233,9 @@ func (p *Parser) NewAtlas() (atlas *Atlas, err error) {
 	}
 
 	img, err := p.r.ReadString('\n')
-	atlas.Image = fmt.Sprintf("%s/%s", p.path, strings.Trim(img, "\n"))
+	tmpString := strings.Trim(img, "\n")
+	tmpString = strings.Trim(tmpString, "\r")
+	atlas.Image = fmt.Sprintf("%s/%s", p.path, tmpString)
 	if err != nil {
 		return
 	}
